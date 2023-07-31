@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
+-->
+<html>    
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="panntillaCss.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+    
+    <title>proximos climas</title>
+</head>
+<body>
+    <header >
+          <a class="card2" href="diasclimas.html" style="display: flex; color: #000;"> <i class="bi bi-calendar-week" style="font-size: 50px;" ></i></a>
+          <a class="card2" href="WeatherNeza.html" style="display: flex; color: #000;"><i class="bi bi-geo-alt" style="font-size: 50px;"></i> <p style="padding: left 6px; padding-top: 15px ; font-size: 15px;">Nezahualcóyotl, Edo Mex</p></a>
+
+
+
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary rounded-circle" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    <a class="card2" > <i class="bi bi-person-circle" style="display: flex; color: #000;" style="font-size: 45px;"></i> </a>
+  </button>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content" >
+       <!--<div class="modal-header">
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div> -->
+        <div class="modal-body"  >
+          
+            <div class="wrapper" style="text-justify:newspaper;"  >
+                <div class="card-switch" >
+                    <label class="switch" >
+                       <input type="checkbox" class="toggle">
+                       
+                       <span class="slider"></span>
+                       <span class="card-side"></span>
+                       <div class="flip-card__inner">
+                        <br>
+                          <div class="flip-card__front">
+                             <div class="title">Iniciar Sesion</div>
+                             <form class="flip-card__form" action="IniciarSesion.html">
+                                <input class="flip-card__input form-control" minlength="2" max1length="60" name="user" placeholder="user" type="text" required>
+                                <input class="flip-card__input form-control" minlength="2" max1length="60" name="password" placeholder="Password" type="password" required>
+                                <button class="flip-card__btn">Iniciar</button>
+                             </form>
+                          </div>
+                          <div class="flip-card__back">
+                             <div class="title">Registrate</div>
+                             <form class="flip-card__form" action="">
+                                <input class="flip-card__input form-control" minlength="2" max1length="60"  placeholder="Nombre" type="text" required>
+                                <input class="flip-card__input form-control" minlength="2" max1length="60" placeholder="Apellido Materno" type="text" required>
+                                <input class="flip-card__input form-control" minlength="2" max1length="60" placeholder="Apellido Paterno" type="text" required>
+                                <input class="flip-card__input  form-control" minlength="10" max1length="100" placeholder="Ubicacion" type="text" required>
+                                <input class="flip-card__input form-control"  minlength="12" max1length="120" name="email" placeholder="Email" type="email" required>  
+                                <input class="flip-card__input form-control" minlength="8" max1length="30"  name="password" placeholder="Password" type="password" required>
+                              
+                                <button type="submit" class="flip-card__btn">Confirmar</button>
+                             </form>
+                          </div>
+                       </div>
+                    </label>
+                </div>   
+           </div>
+
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+        
+</header>
+    <div style="text-align: center; margin-bottom: 80px;">
+
+        <h2>Esos son los proximos pronosticos de </h2>
+    </div>
+    <div class="cards" id="weather-info" >
+    </div>
+<script>
+
+    
+const apiK ='48900a52d7be799f349efc80fac25e87';
+function getrepitclima() {
+    const ubic = '3530589';
+
+
+    const apiUr = `https://api.openweathermap.org/data/2.5/forecast?id=${ubic}&exclude=hourly,minutely&appid=${apiK}&units=metric&lang=es`;
+
+
+        fetch(apiUr)
+            .then(response => response.json())
+            .then(data => {
+
+
+                // Procesa los datos del pronóstico
+                const forecastList = data.list;
+                const targethpur = 15 ;
+                const targethpurmenos= 21;
+                // Obtener la fecha de hoy
+                const today = new Date();
+                today.setHours(0, 0, 0, 0); // Establecer la hora a las 00:00:00 para comparar solo la fecha
+
+                // Filtrar los datos para obtener solo las entradas de los 5 días posteriores
+                const futureForecast = forecastList.filter(item => {
+                    const forecastDate = new Date(item.dt * 1000);
+                
+                     // Establecer la hora a las 00:00:00 para comparar solo la fecha
+                    return forecastDate.getHours() == targethpurmenos  ;
+                });
+
+                // Obtener la temperatura máxima de cada día para los siguientes 5 días
+                let forecastInfo = '';
+                const maxTemperatures = [];
+                futureForecast.forEach(item => {
+                    const forecastDate = new Date(item.dt * 1000).toLocaleDateString();
+                    const weathericonapi = item.weather[0].icon;
+                    const temperature = item.main.temp;
+                    const tempMax = item.main.temp_max;
+                    const tempmin = item.main.temp_min;
+                    const huma = item.main.humidity;
+                    const spe = item.wind.speed;
+                    const press = item.main.pressure;
+                    const deg = item.wind.deg;
+                   
+                    maxTemperatures.push({ date: forecastDate, maxTemp: temperature , img:weathericonapi, min:tempmin, max:tempMax, hume:huma, speed:spe, presion:press, dg:deg});
+                });
+
+                // Mostrar la temperatura máxima de cada día
+                maxTemperatures.forEach((tempData ) => {
+
+                        forecastInfo += `
+                        <div class="book">
+                <div>
+          <h5 style="margin-left:60px;"> Humedad</h5>
+          <h6 style="margin-left:60px;">${tempData.hume}%</h6>
+         
+          <h5 style="margin-left:60px;"> Velocidad de viento</h6>
+          <h6 style="margin-left:60px;">${tempData.speed}metros/seg</h6>
+          
+          <h5 style="margin-left:60px;"> Densidad</h5>
+          <h6 style="margin-left:60px;">${tempData.dg}°</h6>
+          
+          <h5 style="margin-left:60px;"> Presión</h5>
+          <h6 style="margin-left:60px;">${tempData.presion}hpa</h6>
+           </div>
+
+          <div class="cover">
+            <br>
+            <h5 class="text-center" style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">${tempData.date}</h5>
+            <img style="margin-left:70px;" class="img-fluid" src="https://openweathermap.org/img/wn/${tempData.img}.png" width="75" height="75" alt="Weather-icon">
+            <p  class="text-black" style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">${tempData.maxTemp} °C</p>
+            <p  class="text-center" style=""> ->${tempData.max}°C /${tempData.min} °C</p>
+
+          </div>
+        </div>
+
+                        `;
+
+                    
+
+                });
+
+                document.getElementById('weather-info').innerHTML = forecastInfo;
+            })
+            .catch(error => {
+                console.error('Error al obtener el pronóstico del clima:', error);
+                document.getElementById('weather-info').innerHTML = 'Error al obtener el pronóstico del clima';
+            });
+    }
+
+
+// Llama a la función para obtener el pronóstico del clima cuando se carga la página
+window.onload = getrepitclima;
+</script>
+
+<img src="" alt="">
+
+    
+</body>
+<footer>
+
+    <br>
+    <br>
+    <br> 
+    <div class="container2 " >
+        <div class="row" >
+            <img class="img"  src="sky-imagen.jpeg" alt="">
+
+        <ul class="wrapper1 col">
+        <li class="icon facebook">
+            <span class="tooltip">Facebook</span>
+            <span><i class="fab bi-facebook "></i></span>
+        </li>
+        <li class="icon twitter">
+            <span class="tooltip"> twitter</span>
+            <span> <i class="fab bi-twitter "></i></span>
+        </li>
+        <li class="icon instagram">
+            <span class="tooltip">Instagram</span>
+            <span> <i class="fab bi-instagram "></i></span>
+        </li>
+    </ul>
+
+    <div class="">
+        
+        <h4 class="text3">@wheaterNeza  -  Todos los Derechos Reservados</h4>
+    </div>
+</div>
+
+
+
+</div>
+</footer>
+</html>
